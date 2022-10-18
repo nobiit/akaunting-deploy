@@ -63,5 +63,8 @@ RUN sudo -u www-data npm run dev
 COPY files/akaunting.sh /usr/local/bin/akaunting.sh
 COPY files/html /var/www/html
 
+RUN cp ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
+RUN sed -i -E 's/^(memory_limit =) .+$/\1 1G/' ${PHP_INI_DIR}/php.ini
+
 ENTRYPOINT ["/usr/local/bin/akaunting.sh"]
 CMD ["--start"]
