@@ -17,6 +17,7 @@ services:
       - env/run.env
     environment:
       - AKAUNTING_SETUP
+      - AKAUNTING_SAMPLE
     depends_on:
       - akaunting-db
 

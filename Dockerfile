@@ -25,6 +25,8 @@ RUN apt-get update \
     unzip \
     zip \
     zlib1g-dev \
+    git \
+    sudo \
     --no-install-recommends \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -45,10 +47,18 @@ RUN docker-php-ext-configure gd \
     pdo_mysql \
     zip
 
-RUN mkdir -p /var/www/akaunting \
- && curl -Lo /tmp/akaunting.zip 'https://akaunting.com/download.php?version=latest&utm_source=docker&utm_campaign=developers' \
- && unzip /tmp/akaunting.zip -d /var/www/html \
- && rm -f /tmp/akaunting.zip
+RUN curl -sL https://getcomposer.org/installer | php && \
+    mv $(pwd)/composer.phar /usr/local/bin/composer
+
+RUN curl -sL https://nodejs.org/dist/v16.18.0/node-v16.18.0-linux-x64.tar.xz | tar -xJC /usr/local/ --strip-components 1
+
+RUN rm -rf /var/www/html/* && \
+    sudo -u www-data git clone https://github.com/akaunting/akaunting.git /var/www/html
+
+RUN chown www-data: ~www-data
+RUN sudo -u www-data composer install
+RUN sudo -u www-data npm install
+RUN sudo -u www-data npm run dev
 
 COPY files/akaunting.sh /usr/local/bin/akaunting.sh
 COPY files/html /var/www/html
