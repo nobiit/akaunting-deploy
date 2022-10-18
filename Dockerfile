@@ -53,7 +53,7 @@ RUN curl -sL https://getcomposer.org/installer | php && \
 RUN curl -sL https://nodejs.org/dist/v16.18.0/node-v16.18.0-linux-x64.tar.xz | tar -xJC /usr/local/ --strip-components 1
 
 RUN rm -rf /var/www/html/* && \
-    sudo -u www-data git clone https://github.com/akaunting/akaunting.git /var/www/html
+    sudo -u www-data git clone https://github.com/nobiit/akaunting.git /var/www/html
 
 RUN chown www-data: ~www-data
 RUN sudo -u www-data composer install
