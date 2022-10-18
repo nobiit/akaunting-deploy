@@ -5,6 +5,7 @@ a2enmod rewrite
 do_start=
 do_shell=
 do_setup=
+do_sample=
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -19,12 +20,20 @@ while [ $# -gt 0 ]; do
             do_setup=true
             do_start=true
             ;;
+        --sample)
+            do_start=true
+            do_sample=true
+            ;;
     esac
     shift
 done
 
 mkdir -p storage/framework/{sessions,views,cache}
 mkdir -p storage/app/uploads
+
+if [ -z ${AKAUNTING_SETUP} ] && [ $(cat .env.example | grep -c 'DB_USERNAME=.+') == 0 ]; then
+    do_setup=true
+fi
 
 if [ "$do_setup" -o "$AKAUNTING_SETUP" == "true" ]; then
     retry_for=30
@@ -52,6 +61,10 @@ if [ "$do_setup" -o "$AKAUNTING_SETUP" == "true" ]; then
     done
 else
     unset COMPANY_NAME COMPANY_EMAIL ADMIN_EMAIL ADMIN_PASSWORD
+fi
+
+if [ "$do_sample" -o "$AKAUNTING_SAMPLE" == "true" ]; then
+  php artisan sample-data:seed
 fi
 
 chmod -R u=rwX,g=rX,o=rX /var/www/html
